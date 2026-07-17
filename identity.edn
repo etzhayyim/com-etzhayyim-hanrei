@@ -1,0 +1,14 @@
+{:identity/did "did:web:etzhayyim.com:actor:hanrei"
+ :identity/also-known-as ["at://hanrei.etzhayyim.com"
+                          "https://github.com/etzhayyim/com-etzhayyim-hanrei"
+                          "rad:bafkreicr7zkwbxkxy2uebah5clzlxkbmtoxv36blk4vgar2fchokigsoiu"
+                          "did:web:etzhayyim.github.io:com-etzhayyim-hanrei"]
+ :identity/services
+ [{:service/id "did:web:etzhayyim.com:actor:hanrei#atproto_pds"
+   :service/type "AtprotoPersonalDataServer"
+   :service/endpoint "https://pds.etzhayyim.com"}
+  {:service/id "did:web:etzhayyim.com:actor:hanrei#aozora"
+   :service/type "AozoraAppView"
+   :service/endpoint "https://aozora.app"}]
+ :identity/wire-artifact ".well-known/did.json"
+ :identity/wire-format :did-json}
