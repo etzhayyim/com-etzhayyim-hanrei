@@ -173,4 +173,3 @@ etzhayyim deploy                     # TS native mode
 - `schema.edn` and every path referenced by the deployment manifest are owned by this repository.
 - `./run_tests.sh` must pass from a standalone checkout. Do not restore `20-actors` or
   superproject-relative classpath assumptions.
-
