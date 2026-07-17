@@ -165,3 +165,11 @@ Social posts: `writeBuffer.push({ type: "app.bsky.feed.post", payload: { text, o
 cd 60-apps/etzhayyim-project-hanrei/wasm/etzhayyim-wasm-hanrei-jp-h4nr31jp
 etzhayyim deploy                     # TS native mode
 ```
+
+## Standalone repository contract
+
+- `kotoba.app.edn` is the canonical deployment manifest. Component and placement values remain
+  structured EDN; do not encode nested EDN as strings.
+- `schema.edn` and every path referenced by the deployment manifest are owned by this repository.
+- `./run_tests.sh` must pass from a standalone checkout. Do not restore `20-actors` or
+  superproject-relative classpath assumptions.
