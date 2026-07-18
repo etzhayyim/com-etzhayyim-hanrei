@@ -1,0 +1,27 @@
+[{:phase 1
+  :run-id "hanrei-phase1-multicountry-20260718-001"
+  :scope :concurrent-multi-country
+  :started-at "2026-07-18T06:00:00Z"
+  :status :in-progress
+
+  :countries [
+    {:country :jpn :source "courts.go.jp" :target 1000 :status :ready}
+    {:country :usa-sc :source "scholar.google.com" :target 400 :status :ready}
+    {:country :usa-recap :source "courtlistener.com" :target 500 :status :ready}
+    {:country :eu-curia :source "curia.europa.eu" :target 200 :status :ready}
+    {:country :icc :source "icc-cpi.int" :target 50 :status :ready}
+    {:country :icj :source "icj-cij.org" :target 30 :status :ready}
+  ]
+
+  :target-total 2180
+  :concurrency-model :async-go-channels
+  :eta-completion "2026-07-25T23:59:59Z"
+
+  :constraints [
+    "❌ No ranking/audit of courts (ooyake G11)"
+    "❌ No predictive models of sentencing"
+    "✅ Public role names only (no PII)"
+    "✅ Statute reference resolution (target 70%+)"
+    "✅ Coverage honesty (Phase 1 PoC, not representative)"
+  ]}
+]
