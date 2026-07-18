@@ -4,7 +4,8 @@
    Extracts statute references and opinion metadata for Datomic transact."
   (:require [clojure.string :as str]
             #?(:clj [clj-http.client :as http])
-            #?(:clj [org.jsoup :as jsoup])))
+            #?(:clj [org.jsoup :as jsoup]))
+  #?(:cljs (:require-macros [hanrei.ingest])))
 
 ;; === Phase 1 Pilot: Japan Supreme Court API ===
 
@@ -55,7 +56,8 @@
               :article-no (try
                            #?(:clj (Integer/parseInt article-no))
                            #?(:cljs (js/parseInt article-no))
-                           (catch Exception _ nil))
+                           #?(:clj (catch Exception _ nil))
+                           #?(:cljs (catch :default _ nil)))
               :confidence 0.8})
            (filter (fn [[_ n]] (not (nil? n))) matches)))))
 
@@ -66,10 +68,22 @@
   ;; Returns empty for now; full impl would parse 「裁判官 [Name]」 patterns
   [])
 
+(defn- now-instant
+  "Get current timestamp (portable across CLJ/CLJS)"
+  []
+  #?(:clj (java.time.Instant/now)
+     :cljs (js/Date.now)))
+
+(defn- random-id
+  "Generate a random case ID (portable across CLJ/CLJS)"
+  []
+  #?(:clj (str "case-" (java.util.UUID/randomUUID))
+     :cljs (str "case-" (random-uuid))))
+
 (defn build-case-entity
   "Transform raw API response → Datomic entity"
   [raw-case]
-  (let [case-id (or (:case_id raw-case) (str "case-" (java.util.UUID/randomUUID)))
+  (let [case-id (or (:case_id raw-case) (random-id))
         decision-date (or (:decision_date raw-case) "2026-07-18")
         opinion-text (or (:opinion_text raw-case) "")
         statute-refs (extract-statute-references opinion-text)]
@@ -80,7 +94,7 @@
      :hanrei/case-summary (or (:summary raw-case) "")
      :hanrei/source :jpn-supremecourt
      :hanrei/source-url (or (:full_text_url raw-case) "")
-     :hanrei/last-verified (java.time.Instant/now)
+     :hanrei/last-verified (now-instant)
      :hanrei/case-statute statute-refs}))
 
 (defn build-judge-entity
@@ -90,7 +104,7 @@
    :hanrei/judge-name judge-name
    :hanrei/judge-court court-did
    :hanrei/source :jpn-supremecourt
-   :hanrei/last-verified (java.time.Instant/now)})
+   :hanrei/last-verified (now-instant)})
 
 (defn build-opinion-entity
   "Transform opinion → Datomic entity"
@@ -101,7 +115,7 @@
    :hanrei/opinion-text (or (:text raw-opinion) "")
    :hanrei/opinion-case case-id
    :hanrei/source :jpn-supremecourt
-   :hanrei/last-verified (java.time.Instant/now)})
+   :hanrei/last-verified (now-instant)})
 
 (defn ingest-phase-1
   "Phase 1 pilot: fetch 1,000 recent JP Supreme Court decisions.
@@ -131,7 +145,7 @@
     {:ingested (count all-entities)
      :case-count (count case-entities)
      :opinion-count (count opinion-entities)
-     :timestamp (java.time.Instant/now)}))
+     :timestamp (now-instant)}))
 
 (defn validate-ingest
   "Post-ingest validation.

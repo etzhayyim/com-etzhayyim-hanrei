@@ -1,13 +1,13 @@
 (ns hanrei.pilot
   "Phase 1 pilot execution and logging orchestrator."
-  (:require [hanrei.ingest :as ingest]))
+  (:require [hanrei.ingest :as ingest :refer [now-instant]]))
 
 (defn run-phase-1-pilot
   "Execute Phase 1 pilot: fetch 1K decisions from Japan Supreme Court.
    Returns result map with ingested/case-count/opinion-count/timestamp."
   [datomic-conn]
   (println "\n=== hanrei Phase 1 Pilot Execution ===")
-  (println (str "Started at: " (java.time.Instant/now)))
+  (println (str "Started at: " (now-instant)))
 
   (let [result (ingest/ingest-phase-1 datomic-conn
                                        {:page-size 100 :max-pages 10})]
@@ -30,7 +30,7 @@
    Each entry is {:timestamp Instant :phase 1 :result {...}}"
   [result]
   #?(:clj
-     (let [log-entry {:timestamp (java.time.Instant/now)
+     (let [log-entry {:timestamp (now-instant)
                       :phase 1
                       :result result}]
        ;; TODO: write to logs/phase-1-pilot.log as EDN
